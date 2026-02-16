@@ -1,0 +1,30 @@
+<div class="flex align-items-center justify-content-center min-h-screen surface-ground px-4">
+    <p-card styleClass="shadow-4 w-full md:w-30rem p-3">
+        <div class="text-center mb-5">
+            <i class="pi pi-lock text-primary-500 text-5xl mb-3"></i>
+            <h2 class="text-900 font-bold m-0">ברוכים השבים</h2>
+            <p class="text-600 mt-2">הזן פרטים כדי להיכנס למערכת</p>
+        </div>
+
+        <form (ngSubmit)="onLogin()" class="flex flex-column gap-4">
+            <span class="p-float-label">
+                <input pInputText id="email" [(ngModel)]="loginData.email" name="email" class="w-full" />
+                <label for="email">אימייל</label>
+            </span>
+
+            <span class="p-float-label">
+                <p-password id="password" [(ngModel)]="loginData.password" name="password" 
+                            [toggleMask]="true" [feedback]="false" styleClass="w-full" inputStyleClass="w-full">
+                </p-password>
+                <label for="password">סיסמה</label>
+            </span>
+
+            <p-button label="כניסה" type="submit" styleClass="w-full" [loading]="loading"></p-button>
+            
+            <div class="text-center mt-3">
+                <span class="text-600">עדיין אין לך חשבון? </span>
+                <a routerLink="/register" class="text-primary font-bold no-underline hover:underline">להרשמה חינם</a>
+            </div>
+        </form>
+    </p-card>
+</div>

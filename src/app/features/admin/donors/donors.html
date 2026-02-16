@@ -1,0 +1,32 @@
+<p-table [value]="donors">
+
+    <ng-template pTemplate="header">
+    
+    <tr>
+    
+    <th>Name</th>
+    
+    <th>Email</th>
+    
+    <th>Tickets</th>
+    
+    </tr>
+    
+    </ng-template>
+    
+    <ng-template pTemplate="body" let-d>
+    
+    <tr>
+    
+    <td>{{d.firstName}} {{d.lastName}}</td>
+    
+    <td>{{d.email}}</td>
+    
+    <td>{{d.ticketCount}}</td>
+    
+    </tr>
+    
+    </ng-template>
+    
+    </p-table>
+    

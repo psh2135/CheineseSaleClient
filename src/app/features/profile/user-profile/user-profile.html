@@ -1,0 +1,73 @@
+<div class="surface-ground px-4 py-8 md:px-6 lg:px-8 min-h-screen">
+    <div class="grid">
+        <div class="col-12 lg:col-4">
+            <p-card styleClass="shadow-2 border-round text-center p-3">
+                <div class="flex flex-column align-items-center">
+                    <div class="bg-primary-100 border-circle mb-3 flex align-items-center justify-content-center" style="width: 100px; height: 100px">
+                        <i class="pi pi-user text-primary-600 text-5xl"></i>
+                    </div>
+                    <h2 class="text-900 font-bold m-0">{{user?.firstName}} {{user?.lastName}}</h2>
+                    <p class="text-600 mb-4">{{user?.email}}</p>
+                    <!-- <p-button label="ערוך פרופיל" icon="pi pi-pencil" [outlined]="true" size="small"></p-button> -->
+                </div>
+            </p-card>
+        </div>
+        <p-card header="היסטוריית הזמנות">
+            <p-table [value]="orderHistory" dataKey="id" [tableStyle]="{ 'min-width': '50rem' }">
+              <ng-template pTemplate="header">
+                <tr>
+                  <th style="width: 5rem"></th> <th>מספר הזמנה</th>
+                  <th>תאריך</th>
+                  <th>סה"כ</th>
+                  <th>סטטוס</th>
+                </tr>
+              </ng-template>
+          
+              <ng-template pTemplate="body" let-order let-expanded="expanded">
+                <tr>
+                  <td>
+                    <p-button type="button" pRipple [pRowToggler]="order" 
+                              [icon]="expanded ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"
+                              [text]="true" [rounded]="true" />
+                  </td>
+                  <td>{{ order.id }}</td>
+                  <td>{{ order.createdAt | date:'dd/MM/yyyy' }}</td>
+                  <td>{{ order.totalPrice | currency:'ILS' }}</td>
+                  <td>
+                    <p-tag [value]="order.status" [severity]="getSeverity(order.status)"></p-tag>
+                  </td>
+                </tr>
+              </ng-template>
+          
+              <ng-template pTemplate="rowexpansion" let-order>
+                <tr>
+                  <td colspan="5">
+                    <div class="p-3">
+                      <p-table [value]="order.tickets">
+                        <ng-template pTemplate="header">
+                          <tr>
+                            <th>מזהה כרטיס</th>
+                            <th>מחיר</th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-ticket>
+                          <tr>
+                            <td>{{ ticket.id }}</td>
+                            <td>{{ ticket.price | currency:'ILS' }}</td>
+                          </tr>
+                        </ng-template>
+                        <ng-template pTemplate="emptymessage">
+                          <tr>
+                            <td colspan="2">אין כרטיסים להזמנה זו.</td>
+                          </tr>
+                        </ng-template>
+                      </p-table>
+                    </div>
+                  </td>
+                </tr>
+              </ng-template>
+            </p-table>
+          </p-card>
+
+    </div>
+</div>

@@ -1,0 +1,136 @@
+<p-toast></p-toast>
+
+<div class="surface-ground px-4 py-8 md:px-6 lg:px-8">
+  <div class="grid">
+    @for (product of products; track product.id) {
+    <div class="col-12 md:col-6 lg:col-3 p-3">
+      <p-card styleClass="shadow-3 border-round h-full flex flex-column">
+
+        <ng-template pTemplate="header">
+          <div class="relative">
+            <img [src]="product.imageUrl || 'assets/placeholder.png'" [alt]="product.title"
+              class="w-full border-round-top" style="height: 220px; object-fit: cover;">
+
+            <p-tag [severity]="product.isDrawn ? 'danger' : 'success'" [value]="product.isDrawn ? 'הוגרל' : 'פעיל'"
+              class="absolute top-0 right-0 m-2">
+            </p-tag>
+          </div>
+        </ng-template>
+
+        <div class="flex flex-column gap-2" style="min-height: 150px;">
+          <h2 class="text-xl font-bold text-900 m-0">{{ product.title }}</h2>
+
+          <div class="flex flex-wrap gap-1">
+            @for (cat of product.categories; track cat.id) {
+            <p-tag [value]="cat.name" severity="info" [rounded]="true" styleClass="text-xs"></p-tag>
+            }
+          </div>
+
+          <p class="text-600 line-height-3 m-0 overflow-hidden"
+            style="display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical;">
+            {{ product.description }}
+          </p>
+        </div>
+
+        <ng-template pTemplate="footer">
+          <div class="border-top-1 surface-border pt-3">
+            <div class="flex align-items-center justify-content-between mb-3">
+              <span class="text-2xl font-bold text-primary">{{ product.price | currency:'ILS':'symbol':'1.0-0' }}</span>
+              <!-- <span class="text-500 text-sm">קוד: {{ product.id }}</span> -->
+            </div>
+
+            <!-- <div class="flex gap-2">
+              @if (!product.isDrawn) {
+                <button pButton 
+                        label="הוסף לסל" 
+                        icon="pi pi-shopping-cart" 
+                        class="w-full p-button-raised"
+                        (click)="addToCart(product.id)">
+                </button>
+              } @else {
+                <button pButton 
+                        label="צפה בזוכה" 
+                        icon="pi pi-trophy" 
+                        class="w-full p-button-help p-button-outlined"
+                        (click)="viewWinner(product.id)">
+                </button>
+              }
+            </div> -->
+            <div class="flex gap-2">
+
+              @if (isAdmin) {
+
+              @if (!product.isDrawn) {
+
+              <button pButton icon="pi pi-pencil" class="w-full p-button-warning" (click)="updateGift(product)">
+              </button>
+
+              <button pButton icon="pi pi-play" class="w-full p-button-success" (click)="runLottery(product.id)">
+              </button>
+
+              }
+              @else {
+
+              <button pButton label="צפה בזוכה" icon="pi pi-trophy" class="w-full p-button-help"
+                (click)="viewWinner(product.id)">
+              </button>
+
+              }
+
+              }
+              @else {
+
+              @if (!product.isDrawn) {
+
+              <button pButton label="הוסף לסל" icon="pi pi-shopping-cart" class="w-full p-button-raised"
+                (click)="addToCart(product.id)">
+              </button>
+
+              }
+              @else {
+
+              <button pButton label="צפה בזוכה" icon="pi pi-trophy" class="w-full p-button-help p-button-outlined"
+                (click)="viewWinner(product.id)">
+              </button>
+
+              }
+
+              }
+
+            </div>
+
+          </div>
+        </ng-template>
+
+      </p-card>
+    </div>
+    }
+  </div>
+</div>
+<p-dialog header="עריכת מתנה" *ngIf="selectedProduct" [(visible)]="editDialog" [modal]="true" [style]="{width:'400px'}">
+
+  <div class="flex flex-column gap-3">
+
+    <input pInputText [(ngModel)]="selectedProduct.title" placeholder="שם מתנה">
+
+    <input pInputText [(ngModel)]="selectedProduct.price" placeholder="מחיר">
+
+    <input pInputText [(ngModel)]="selectedProduct.description" placeholder="תיאור">
+
+  </div>
+
+  <ng-template pTemplate="footer">
+
+    <div class="flex justify-content-between w-full">
+
+      <button pButton label="Delete" icon="pi pi-trash" class="p-button-danger" (click)="deleteGift()">
+      </button>
+
+      <button pButton label="Save" icon="pi pi-check" (click)="saveGift()">
+      </button>
+
+    </div>
+
+  </ng-template>
+
+</p-dialog>
