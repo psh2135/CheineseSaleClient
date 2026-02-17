@@ -36,7 +36,7 @@
 
         <ng-template pTemplate="header">
           <div class="relative">
-            <img [src]="product.imageUrl || 'assets/placeholder.png'" [alt]="product.title"
+            <img [src]="product.imageUrl || 'assets/placeholder.png'" [alt]="product.imageUrl"
               class="w-full border-round-top" style="height: 220px; object-fit: cover;">
 
             <p-tag [severity]="product.isDrawn ? 'danger' : 'success'" [value]="product.isDrawn ? 'הוגרל' : 'פעיל'"
