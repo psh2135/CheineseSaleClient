@@ -1,0 +1,111 @@
+<div class="surface-ground px-4 py-8 md:px-6 lg:px-8 min-h-screen">
+
+  <!-- כותרת -->
+  <div class="flex align-items-center mb-5">
+    <i class="pi pi-trophy text-yellow-500 text-4xl ml-3"></i>
+    <div>
+      <h1 class="text-900 font-bold m-0">רשימת הזוכים</h1>
+      <p class="text-600 mt-1 mb-0">כל הזוכים במתנות</p>
+    </div>
+  </div>
+
+  <!-- טוען -->
+  <div *ngIf="isLoading"
+    class="flex justify-content-center align-items-center"
+    style="height: 300px">
+    <p-progressSpinner strokeWidth="4" />
+  </div>
+
+  <!-- שגיאה -->
+  <div *ngIf="!isLoading && hasError"
+    class="flex flex-column align-items-center justify-content-center"
+    style="height: 300px">
+    <i class="pi pi-exclamation-triangle text-red-500 text-5xl mb-3"></i>
+    <p class="text-600 mb-3">אירעה שגיאה בטעינת הנתונים</p>
+    <button
+      type="button"
+      class="p-button p-button-outlined"
+      (click)="loadWinners()">
+      <i class="pi pi-refresh ml-2"></i>
+      נסה שוב
+    </button>
+  </div>
+
+  <!-- אין זוכים -->
+  <div *ngIf="!isLoading && !hasError && winners.length === 0"
+    class="flex flex-column align-items-center justify-content-center"
+    style="height: 300px">
+    <i class="pi pi-inbox text-400 text-5xl mb-3"></i>
+    <p class="text-600">אין זוכים עדיין</p>
+  </div>
+
+  <!-- טבלה -->
+  <p-card
+    *ngIf="!isLoading && !hasError && winners.length > 0"
+    styleClass="shadow-2">
+
+    <p-table
+      [value]="winners"
+      [paginator]="true"
+      [rows]="10"
+      [rowsPerPageOptions]="[10, 25, 50]"
+      [tableStyle]="{ 'min-width': '50rem' }"
+      styleClass="p-datatable-gridlines p-datatable-striped">
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="winnerName">
+            שם הזוכה <p-sortIcon field="winnerName" />
+          </th>
+          <th pSortableColumn="email">
+            אימייל <p-sortIcon field="email" />
+          </th>
+          <th pSortableColumn="giftTitle">
+            שם המתנה <p-sortIcon field="giftTitle" />
+          </th>
+          <th pSortableColumn="price">
+            מחיר <p-sortIcon field="price" />
+          </th>
+          <th>מזהה זוכה</th>
+          <th>מזהה מתנה</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-winner>
+        <tr>
+          <td>
+            <div class="flex align-items-center gap-2">
+              <div class="bg-primary-100 border-circle flex align-items-center justify-content-center"
+                style="width: 32px; height: 32px; min-width: 32px">
+                <i class="pi pi-user text-primary-600 text-sm"></i>
+              </div>
+              {{ winner.winnerName }}
+            </div>
+          </td>
+          <td>{{ winner.email }}</td>
+          <td>
+            <div class="flex align-items-center gap-2">
+              <i class="pi pi-gift text-yellow-500"></i>
+              {{ winner.giftTitle }}
+            </div>
+          </td>
+          <td>{{ winner.price | currency:'ILS' }}</td>
+          <td>
+            <span class="text-500 text-sm">#{{ winner.winnerId }}</span>
+          </td>
+          <td>
+            <span class="text-500 text-sm">#{{ winner.giftId }}</span>
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="6" class="text-center p-4">אין נתונים להצגה</td>
+        </tr>
+      </ng-template>
+
+    </p-table>
+  </p-card>
+
+</div>

@@ -1,4 +1,11 @@
 <p-toast></p-toast>
+@if (isAdmin) {
+@if (isLocked$ | async) {}@else{
+<div class="mb-3">
+  <button pButton label="הוסף מתנה" icon="pi pi-plus" class="p-button-success" (click)="openCreateDialog()">
+  </button>
+</div>
+}}
 
 <div class="surface-ground px-4 py-8 md:px-6 lg:px-8">
   <div class="grid">
@@ -59,42 +66,38 @@
             <div class="flex gap-2">
 
               @if (isAdmin) {
-
               @if (!product.isDrawn) {
-
-              <button pButton icon="pi pi-pencil" class="w-full p-button-warning" (click)="updateGift(product)">
-              </button>
-
+              @if (isLocked$ | async) {
               <button pButton icon="pi pi-play" class="w-full p-button-success" (click)="runLottery(product.id)">
               </button>
-
+              } @else {
+              <button pButton icon="pi pi-pencil" class="w-full p-button-warning" (click)="updateGift(product)">
+              </button>
               }
-              @else {
-
+              } @else {
               <button pButton label="צפה בזוכה" icon="pi pi-trophy" class="w-full p-button-help"
                 (click)="viewWinner(product.id)">
               </button>
-
+              }
               }
 
-              }
+
               @else {
-
+              @if (isLocked$ | async) {
               @if (!product.isDrawn) {
-
               <button pButton label="הוסף לסל" icon="pi pi-shopping-cart" class="w-full p-button-raised"
                 (click)="addToCart(product.id)">
               </button>
-
-              }
-              @else {
-
+              } @else {
               <button pButton label="צפה בזוכה" icon="pi pi-trophy" class="w-full p-button-help p-button-outlined"
                 (click)="viewWinner(product.id)">
               </button>
-
               }
-
+              } @else {
+              <span class="text-orange-500 font-bold text-sm w-full text-center">
+                המכירה טרם נפתחה
+              </span>
+              }
               }
 
             </div>
@@ -107,7 +110,7 @@
     }
   </div>
 </div>
-<p-dialog header="עריכת מתנה" *ngIf="selectedProduct" [(visible)]="editDialog" [modal]="true" [style]="{width:'400px'}">
+<!-- <p-dialog header="עריכת מתנה" *ngIf="selectedProduct" [(visible)]="editDialog" [modal]="true" [style]="{width:'400px'}">
 
   <div class="flex flex-column gap-3">
 
@@ -131,6 +134,148 @@
 
     </div>
 
+  </ng-template>
+
+</p-dialog> -->
+<!-- 
+<p-dialog header="הוספת מתנה חדשה"
+          [(visible)]="createDialog"
+          [modal]="true"
+          [style]="{width:'400px'}">
+
+  <div class="flex flex-column gap-3">
+
+    <input pInputText [(ngModel)]="newProduct.title" placeholder="שם מתנה">
+
+    <input pInputText type="number" [(ngModel)]="newProduct.price" placeholder="מחיר">
+
+    <input pInputText [(ngModel)]="newProduct.description" placeholder="תיאור">
+
+    <input pInputText [(ngModel)]="newProduct.imageUrl" placeholder="תמונה (URL)">
+
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button pButton
+            label="שמירה"
+            icon="pi pi-check"
+            (click)="createGift()">
+    </button>
+  </ng-template>
+
+</p-dialog> -->
+<!-- דיאלוג עריכת מתנה -->
+<p-dialog header="עריכת מתנה" [(visible)]="editDialog" [modal]="true" [style]="{width:'500px'}">
+
+  <div class="flex flex-column gap-3">
+
+    <!-- שם מתנה -->
+    <div class="flex flex-column gap-2">
+      <label for="edit-title" class="font-semibold">שם מתנה</label>
+      <input id="edit-title" pInputText [(ngModel)]="selectedProduct.title" placeholder="הזן שם מתנה">
+    </div>
+
+    <!-- מחיר -->
+    <div class="flex flex-column gap-2">
+      <label for="edit-price" class="font-semibold">מחיר</label>
+      <input id="edit-price" pInputText [(ngModel)]="selectedProduct.price" placeholder="הזן מחיר" type="number">
+    </div>
+
+    <!-- תיאור -->
+    <div class="flex flex-column gap-2">
+      <label for="edit-description" class="font-semibold">תיאור</label>
+      <input id="edit-description" pInputText [(ngModel)]="selectedProduct.description" placeholder="הזן תיאור">
+    </div>
+
+    <!-- תורם -->
+    <div class="flex flex-column gap-2">
+      <label for="edit-donor" class="font-semibold">תורם</label>
+      <p-select id="edit-donor" [options]="donors" [(ngModel)]="selectedProduct.donorId" optionLabel="userName"
+        optionValue="id" placeholder="בחר תורם" [filter]="true" filterBy="userName" [showClear]="true"
+        [style]="{ width: '100%' }">
+      </p-select>
+    </div>
+
+    <!-- קטגוריות -->
+    <div class="flex flex-column gap-2">
+      <label for="edit-categories" class="font-semibold">קטגוריות</label>
+      <p-multiSelect id="edit-categories" [options]="categories" [(ngModel)]="selectedProduct.categoryIds"
+        optionLabel="name" optionValue="id" placeholder="בחר קטגוריות" [filter]="true" filterBy="name"
+        [showClear]="true" display="chip" [style]="{ width: '100%' }">
+      </p-multiSelect>
+    </div>
+
+    <!-- תמונה -->
+    <div class="flex flex-column gap-2">
+      <label for="edit-image" class="font-semibold">תמונה (URL)</label>
+      <input id="edit-image" pInputText [(ngModel)]="selectedProduct.imageUrl" placeholder="הזן כתובת תמונה">
+    </div>
+
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button pButton label="מחק" icon="pi pi-trash" class="p-button-danger p-button-text" (click)="deleteGift()">
+    </button>
+    <button pButton label="ביטול" icon="pi pi-times" class="p-button-text" (click)="editDialog = false">
+    </button>
+    <button pButton label="שמור" icon="pi pi-check" (click)="saveGift()">
+    </button>
+  </ng-template>
+
+</p-dialog>
+<!-- דיאלוג הוספת מתנה חדשה -->
+<p-dialog header="הוספת מתנה חדשה" [(visible)]="createDialog" [modal]="true" [style]="{width:'500px'}">
+
+  <div class="flex flex-column gap-3">
+
+    <!-- שם מתנה -->
+    <div class="flex flex-column gap-2">
+      <label for="title" class="font-semibold">שם מתנה</label>
+      <input id="title" pInputText [(ngModel)]="newProduct.title" placeholder="הזן שם מתנה">
+    </div>
+
+    <!-- מחיר -->
+    <div class="flex flex-column gap-2">
+      <label for="price" class="font-semibold">מחיר</label>
+      <input id="price" pInputText [(ngModel)]="newProduct.price" placeholder="הזן מחיר" type="number">
+    </div>
+
+    <!-- תיאור -->
+    <div class="flex flex-column gap-2">
+      <label for="description" class="font-semibold">תיאור</label>
+      <input id="description" pInputText [(ngModel)]="newProduct.description" placeholder="הזן תיאור">
+    </div>
+
+    <!-- תורם -->
+    <div class="flex flex-column gap-2">
+      <label for="donor" class="font-semibold">תורם</label>
+      <p-select id="donor" [options]="donors" [(ngModel)]="newProduct.donorId" optionLabel="userName" optionValue="id"
+        placeholder="בחר תורם" [filter]="true" filterBy="userName" [showClear]="true" [style]="{ width: '100%' }">
+      </p-select>
+    </div>
+
+    <!-- קטגוריות -->
+    <div class="flex flex-column gap-2">
+      <label for="categories" class="font-semibold">קטגוריות</label>
+      <p-multiSelect id="categories" [options]="categories" [(ngModel)]="newProduct.categoryIds" optionLabel="name"
+        optionValue="id" placeholder="בחר קטגוריות" [filter]="true" filterBy="name" [showClear]="true" display="chip"
+        [style]="{ width: '100%' }">
+      </p-multiSelect>
+    </div>
+
+    <!-- תמונה -->
+    <div class="flex flex-column gap-2">
+      <label for="image" class="font-semibold">תמונה (URL)</label>
+      <input id="image" pInputText [(ngModel)]="newProduct.imageUrl" placeholder="הזן כתובת תמונה">
+    </div>
+
+  </div>
+
+  <ng-template pTemplate="footer">
+    <button pButton label="ביטול" icon="pi pi-times" class="p-button-text" (click)="createDialog = false">
+    </button>
+    <button pButton label="שמירה" icon="pi pi-check" (click)="createGift()">
+    </button>
   </ng-template>
 
 </p-dialog>

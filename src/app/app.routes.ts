@@ -6,6 +6,7 @@ import { RegisterComponent } from './features/auth/register/register';
 import { UserProfileComponent } from './features/profile/user-profile/user-profile.js';
 import { AdminDashboardComponent } from './features/admin/dashboard/dashboard';
 import { AdminDonorsComponent } from './features/admin/donors/donors';
+import { WinnersComponent } from './features/admin/winners/winners.js';
 
 export const routes: Routes = [
   {
@@ -20,6 +21,7 @@ export const routes: Routes = [
  
   { path: 'admin/dashboard', component: AdminDashboardComponent },
   { path: 'admin/donors', component: AdminDonorsComponent },
+  { path: 'admin/winners', component: WinnersComponent },
 
 
 ];

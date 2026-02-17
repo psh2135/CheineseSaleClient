@@ -1,32 +1,144 @@
-<p-table [value]="donors">
+<div class="surface-ground px-4 py-8 md:px-6 lg:px-8 min-h-screen">
 
-    <ng-template pTemplate="header">
-    
-    <tr>
-    
-    <th>Name</th>
-    
-    <th>Email</th>
-    
-    <th>Tickets</th>
-    
-    </tr>
-    
-    </ng-template>
-    
-    <ng-template pTemplate="body" let-d>
-    
-    <tr>
-    
-    <td>{{d.firstName}} {{d.lastName}}</td>
-    
-    <td>{{d.email}}</td>
-    
-    <td>{{d.ticketCount}}</td>
-    
-    </tr>
-    
-    </ng-template>
-    
+  <p-toast position="top-center"></p-toast>
+  <p-confirmDialog></p-confirmDialog>
+
+  <!-- כותרת -->
+  <div class="flex justify-content-between align-items-center mb-5">
+    <div class="flex align-items-center gap-3">
+      <i class="pi pi-users text-primary text-4xl"></i>
+      <div>
+        <h1 class="text-900 font-bold m-0">ניהול תורמים</h1>
+        <p class="text-600 m-0">רשימת כל התורמים במערכת</p>
+      </div>
+    </div>
+
+    <button
+      pButton
+      type="button"
+      label="הוסף תורם"
+      icon="pi pi-plus"
+      class="p-button-success"
+      (click)="openNewDialog()">
+    </button>
+  </div>
+
+  <!-- טוען -->
+  <div *ngIf="isLoading" class="flex justify-content-center align-items-center" style="height: 300px">
+    <p-progressSpinner strokeWidth="4"></p-progressSpinner>
+  </div>
+
+  <!-- שגיאה -->
+  <div *ngIf="!isLoading && hasError" class="flex flex-column align-items-center justify-content-center" style="height: 300px">
+    <i class="pi pi-exclamation-triangle text-red-500 text-5xl mb-3"></i>
+    <p class="mb-3">אירעה שגיאה בטעינת הנתונים</p>
+    <button
+      pButton
+      label="נסה שוב"
+      icon="pi pi-refresh"
+      class="p-button-outlined"
+      (click)="loadUsers()">
+    </button>
+  </div>
+
+  <!-- אין נתונים -->
+  <div *ngIf="!isLoading && !hasError && users.length === 0"
+       class="flex flex-column align-items-center justify-content-center"
+       style="height: 300px">
+    <i class="pi pi-inbox text-400 text-5xl mb-3"></i>
+    <p>אין תורמים במערכת</p>
+  </div>
+
+  <!-- טבלה -->
+  <p-card *ngIf="!isLoading && !hasError && users.length > 0" styleClass="shadow-2">
+    <p-table
+      [value]="users"
+      [paginator]="true"
+      [rows]="10"
+      [rowsPerPageOptions]="[10, 25, 50]"
+      [tableStyle]="{ 'min-width': '40rem' }"
+      styleClass="p-datatable-striped p-datatable-gridlines">
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="id">מזהה</th>
+          <th pSortableColumn="userName">שם משתמש</th>
+          <th pSortableColumn="email">אימייל</th>
+          <th style="width: 10rem">פעולות</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-user>
+        <tr>
+          <td>#{{ user.id }}</td>
+          <td>{{ user.userName }}</td>
+          <td>{{ user.email }}</td>
+          <td>
+            <button
+              pButton
+              icon="pi pi-pencil"
+              class="p-button-text p-button-info p-button-rounded"
+              pTooltip="ערוך"
+              (click)="openEditDialog(user)">
+            </button>
+
+            <button
+              pButton
+              icon="pi pi-trash"
+              class="p-button-text p-button-danger p-button-rounded"
+              pTooltip="מחק"
+              (click)="confirmDelete(user)">
+            </button>
+          </td>
+        </tr>
+      </ng-template>
+
     </p-table>
-    
+  </p-card>
+
+  <!-- דיאלוג -->
+  <p-dialog
+    [(visible)]="displayDialog"
+    [header]="isEditMode ? 'עריכת תורם' : 'הוספת תורם'"
+    [modal]="true"
+    [style]="{ width: '400px' }"
+    [draggable]="false"
+    [resizable]="false">
+
+    <div class="flex flex-column gap-3">
+      <div class="flex flex-column gap-2">
+        <label>שם משתמש</label>
+        <input
+          pInputText
+          [(ngModel)]="selectedUser.userName"
+          placeholder="שם משתמש">
+      </div>
+
+      <div class="flex flex-column gap-2">
+        <label>אימייל</label>
+        <input
+          pInputText
+          type="email"
+          [(ngModel)]="selectedUser.email"
+          placeholder="אימייל">
+      </div>
+    </div>
+
+    <ng-template pTemplate="footer">
+      <button
+        pButton
+        label="ביטול"
+        class="p-button-text"
+        (click)="hideDialog()">
+      </button>
+
+      <button
+        pButton
+        label="שמור"
+        icon="pi pi-check"
+        (click)="saveUser()">
+      </button>
+    </ng-template>
+  </p-dialog>
+
+</div>

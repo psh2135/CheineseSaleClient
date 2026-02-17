@@ -51,7 +51,7 @@ export class CartService {
   }
 
   refreshCart(): void {
-    this.http.get<Gift[]>(`${this.apiUrl}/cart`)
+    this.http.get<Gift[]>(`${this.apiUrl}`)
       .subscribe({
         next: items => this.rawItemsSubject.next(items || []),
         error: err => {
@@ -61,43 +61,53 @@ export class CartService {
       });
   }
 
+  // addToCart(giftId: number) {
+  //   return this.http.post(`${this.apiUrl}/add`, { giftId }).pipe(
+  //     tap(() => {
+  //       const current = this.rawItemsSubject.value;
+
+  //       const gift = current.find(g => g.id === giftId);
+  //       if (!gift) return;
+
+  //       this.rawItemsSubject.next([...current, gift]);
+  //     })
+  //   );
+  // }
   addToCart(giftId: number) {
     return this.http.post(`${this.apiUrl}/add`, { giftId }).pipe(
-      tap(() => {
-        const current = this.rawItemsSubject.value;
-
-        const gift = current.find(g => g.id === giftId);
-        if (!gift) return;
-
-        this.rawItemsSubject.next([...current, gift]);
-      })
+      tap(() => this.refreshCart())
     );
   }
+  // removeFromCart(giftId: number) {
+  //   return this.http.delete(`${this.apiUrl}/remove`, {
+  //     body: { giftId }
+  //   }).pipe(
+  //     tap(() => {
+  //       const current = [...this.rawItemsSubject.value];
+  //       const index = current.findIndex(g => g.id === giftId);
 
-  removeFromCart(giftId: number) {
-    return this.http.delete(`${this.apiUrl}/remove`, {
-      body: { giftId }
-    }).pipe(
-      tap(() => {
-        const current = [...this.rawItemsSubject.value];
-        const index = current.findIndex(g => g.id === giftId);
+  //       if (index >= 0) {
+  //         current.splice(index, 1);
+  //         this.rawItemsSubject.next(current);
+  //       }
+  //     })
+  //   );
+  // }
 
-        if (index >= 0) {
-          current.splice(index, 1);
-          this.rawItemsSubject.next(current);
-        }
-      })
-    );
-  }
-
-
+removeFromCart(giftId: number) {
+  return this.http.delete(`${this.apiUrl}/remove`, {
+    body: { giftId }
+  }).pipe(
+    tap(() => this.refreshCart())
+  );
+}
 
   checkout(): Observable<any> {
     return this.http.post(`${this.apiUrl}/checkout`, {}).pipe(
       tap(() => {
         this.refreshCart();
-        
-  })
+
+      })
     );
   }
 
@@ -112,10 +122,10 @@ export class CartService {
       tap(data => {
         console.log('הנתונים שחזרו מהשרת:', data);
       }),
-    
+
       catchError(error => {
         console.error('קרתה שגיאה בשליפת הנתונים:', error);
-       
+
         return throwError(() => error);
       })
     );

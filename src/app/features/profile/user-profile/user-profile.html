@@ -1,4 +1,4 @@
-<div class="surface-ground px-4 py-8 md:px-6 lg:px-8 min-h-screen">
+<!-- <div class="surface-ground px-4 py-8 md:px-6 lg:px-8 min-h-screen">
     <div class="grid">
         <div class="col-12 lg:col-4">
             <p-card styleClass="shadow-2 border-round text-center p-3">
@@ -8,7 +8,7 @@
                     </div>
                     <h2 class="text-900 font-bold m-0">{{user?.firstName}} {{user?.lastName}}</h2>
                     <p class="text-600 mb-4">{{user?.email}}</p>
-                    <!-- <p-button label="ערוך פרופיל" icon="pi pi-pencil" [outlined]="true" size="small"></p-button> -->
+                     <p-button label="ערוך פרופיל" icon="pi pi-pencil" [outlined]="true" size="small"></p-button> 
                 </div>
             </p-card>
         </div>
@@ -70,4 +70,110 @@
           </p-card>
 
     </div>
+</div> -->
+<div class="surface-ground px-4 py-8 md:px-6 lg:px-8 min-h-screen">
+  <div class="grid">
+
+    <!-- כרטיס פרופיל משתמש -->
+    <div class="col-12 lg:col-4">
+      <p-card styleClass="shadow-2 border-round text-center p-3">
+        <div class="flex flex-column align-items-center">
+          <div
+            class="bg-primary-100 border-circle mb-3 flex align-items-center justify-content-center"
+            style="width: 100px; height: 100px">
+            <i class="pi pi-user text-primary-600 text-5xl"></i>
+          </div>
+          <h2 class="text-900 font-bold m-0">{{ user?.userName }}</h2>
+          <p class="text-600 mb-4">{{ user?.email }}</p>
+        </div>
+      </p-card>
+    </div>
+
+    <!-- טבלת היסטוריית הזמנות -->
+    <div class="col-12">
+      <p-card header="היסטוריית הזמנות" styleClass="shadow-2">
+        <p-table
+          [value]="orderHistory"
+          dataKey="idStr"
+          [expandedRowKeys]="expandedRows"
+          rowExpandMode="multiple"
+          [tableStyle]="{ 'min-width': '50rem' }">
+
+          <!-- כותרות -->
+          <ng-template pTemplate="header">
+            <tr>
+              <th style="width: 5rem"></th>
+              <th>מספר הזמנה</th>
+              <th>תאריך</th>
+              <th>סה"כ</th>
+              <th>סטטוס</th>
+            </tr>
+          </ng-template>
+
+          <!-- שורת הזמנה -->
+          <ng-template pTemplate="body" let-order>
+            <tr>
+              <td>
+                <button
+                  type="button"
+                  class="p-button p-button-text p-button-rounded p-button-plain"
+                  (click)="toggleRow(order)">
+                  <i [class]="isExpanded(order.id) ? 'pi pi-chevron-down' : 'pi pi-chevron-right'"></i>
+                </button>
+              </td>
+              <td>{{ order.id }}</td>
+              <td>{{ order.createdAt | date:'dd/MM/yyyy' }}</td>
+              <td>{{ order.totalPrice | currency:'ILS' }}</td>
+              <td>
+                <p-tag [value]="order.status" [severity]="getSeverity(order.status)"></p-tag>
+              </td>
+            </tr>
+          </ng-template>
+
+          <!-- שורת הרחבה עם כרטיסים -->
+          <ng-template pTemplate="rowexpansion" let-order>
+            <tr>
+              <td colspan="5">
+                <div class="p-3 bg-surface-50">
+                  <h5 class="mb-3 mt-0">כרטיסים להזמנה #{{ order.id }}</h5>
+                  <p-table [value]="order.tickets" styleClass="p-datatable-sm">
+
+                    <ng-template pTemplate="header">
+                      <tr>
+                        <th>מזהה כרטיס</th>
+                        <th>שם המתנה</th>
+                      </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="body" let-ticket>
+                      <tr>
+                        <td>{{ ticket.id }}</td>
+                        <td>{{ ticket.giftName }}</td>
+                      </tr>
+                    </ng-template>
+
+                    <ng-template pTemplate="emptymessage">
+                      <tr>
+                        <td colspan="2">אין כרטיסים להזמנה זו.</td>
+                      </tr>
+                    </ng-template>
+
+                  </p-table>
+                </div>
+              </td>
+            </tr>
+          </ng-template>
+
+          <!-- אין הזמנות -->
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="5" class="text-center p-4">אין הזמנות עדיין.</td>
+            </tr>
+          </ng-template>
+
+        </p-table>
+      </p-card>
+    </div>
+
+  </div>
 </div>

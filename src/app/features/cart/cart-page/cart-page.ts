@@ -32,34 +32,51 @@ export class CartPageComponent {
     this.totalPrice$ = this.cartService.totalPrice$;
   }
 
-  increaseQuantity(item: CartItem) {
-    item.quantity++;
-    this.isLoading = true;
+  // increaseQuantity(item: CartItem) {
+  //   item.quantity++;
+  //   this.isLoading = true;
 
-    this.cartService.addToCart(item.id).subscribe({
-      next: () => this.isLoading = false,
-      error: () => {
-        item.quantity--;
-        this.isLoading = false;
-      }
-    });
-  }
+  //   this.cartService.addToCart(item.id).subscribe({
+  //     next: () => this.isLoading = false,
+  //     error: () => {
+  //       item.quantity--;
+  //       this.isLoading = false;
+  //     }
+  //   });
+  // }
 
-  decreaseQuantity(item: CartItem) {
-    if (item.quantity <= 0) return;
+  // decreaseQuantity(item: CartItem) {
+  //   if (item.quantity <= 0) return;
 
-    item.quantity--;
-    this.isLoading = true;
+  //   item.quantity--;
+  //   this.isLoading = true;
 
-    this.cartService.removeFromCart(item.id).subscribe({
-      next: () => this.isLoading = false,
-      error: () => {
-        item.quantity++;
-        this.isLoading = false;
-      }
-    });
-  }
+  //   this.cartService.removeFromCart(item.id).subscribe({
+  //     next: () => this.isLoading = false,
+  //     error: () => {
+  //       item.quantity++;
+  //       this.isLoading = false;
+  //     }
+  //   });
+  // }
+increaseQuantity(item: CartItem) {
+  this.isLoading = true;
 
+  this.cartService.addToCart(item.id).subscribe({
+    next: () => this.isLoading = false,
+    error: () => this.isLoading = false
+  });
+}
+
+decreaseQuantity(item: CartItem) {
+  if (item.quantity <= 0) return;
+  this.isLoading = true;
+
+  this.cartService.removeFromCart(item.id).subscribe({
+    next: () => this.isLoading = false,
+    error: () => this.isLoading = false
+  });
+}
   deleteGift(item: CartItem) {
     this.isLoading = true;
 
@@ -68,12 +85,22 @@ export class CartPageComponent {
       .finally(() => this.isLoading = false);
   }
 
+  // checkout() {
+  //   this.isLoading = true;
+  //   this.cartService.checkout().subscribe({
+  //     next: () => this.isLoading = false,
+  //     error: () => this.isLoading = false
+  //   });
+  //   this.router.navigate(["/profile"])
+  // }
   checkout() {
-    this.isLoading = true;
-    this.cartService.checkout().subscribe({
-      next: () => this.isLoading = false,
-      error: () => this.isLoading = false
-    });
-    this.router.navigate(["/profile"])
-  }
+  this.isLoading = true;
+  this.cartService.checkout().subscribe({
+    next: () => {
+      this.isLoading = false;
+      this.router.navigate(["/profile"]);  // ← ניווט רק אחרי שהסתיים
+    },
+    error: () => this.isLoading = false
+  });
+}
 }

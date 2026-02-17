@@ -10,10 +10,11 @@ export interface CartItem {
     giftName: string;
   }
   
-  export interface Order {
-    id: number;
-    status: string;
-    createdAt: string; 
-    totalPrice: number;
-    tickets: Ticket[]; 
-  }
+ export interface Order {
+  id: number;
+  idStr?: string; 
+  status: string;
+  createdAt: string;
+  totalPrice: number;
+  tickets: Ticket[];
+}
