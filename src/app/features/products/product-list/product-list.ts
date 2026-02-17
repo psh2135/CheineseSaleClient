@@ -286,13 +286,13 @@ export class ProductListComponent implements OnInit {
   isAdmin: boolean = false;
   editDialog: boolean = false;
   createDialog: boolean = false;
-
+  filteredProducts: Product[] = [];
   selectedProduct: Product = this.getEmptyProduct();
   newProduct: CreateProduct = this.getEmptyCreateProduct();
 
-  // רשימות לבחירה
   categories: Category[] = [];
   donors: User[] = [];
+  selectedCategoryId: number | null = null;
 
   isLocked$!: Observable<boolean>;
 
@@ -310,10 +310,9 @@ export class ProductListComponent implements OnInit {
     this.isAdmin = this.authService.isAdmin();
     this.isLocked$ = this.raffleState.isLocked$;
     this.loadProducts();
-
+    this.loadCategories();
     // טען קטגוריות ותורמים אם מנהל
     if (this.isAdmin) {
-      this.loadCategories();
       this.loadDonors();
     }
   }
@@ -323,6 +322,7 @@ export class ProductListComponent implements OnInit {
       next: (data: Product[]) => {
         this.products = data;
         this.loading = false;
+        this.filteredProducts = data; 
       },
       error: (err: any) => {
         console.error('שגיאה בטעינת מוצרים:', err);
@@ -357,7 +357,38 @@ export class ProductListComponent implements OnInit {
       }
     });
   }
+ onCategoryChange(categoryId: number | null): void {
+    this.selectedCategoryId = categoryId;
+    
+    if (categoryId === null) {
+      // הצג הכל
+      this.filteredProducts = this.products;
+    } else {
+      // סנן לפי קטגוריה
+      this.loading = true;
+      this.productService.getProductsByCategory(categoryId).subscribe({
+        next: (data) => {
+          this.filteredProducts = data;
+          this.loading = false;
+        },
+        error: (err) => {
+          console.error('שגיאה בסינון:', err);
+          this.messageService.add({
+            severity: 'error',
+            summary: 'שגיאה',
+            detail: 'לא ניתן לסנן לפי קטגוריה'
+          });
+          this.loading = false;
+        }
+      });
+    }
+  }
 
+  // ✅ פונקציה לאיפוס הסינון
+  clearFilter(): void {
+    this.selectedCategoryId = null;
+    this.filteredProducts = this.products;
+  }
   addToCart(productId: number): void {
     this.cartService.addToCart(productId).subscribe({
       next: () => {

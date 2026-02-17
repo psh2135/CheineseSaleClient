@@ -40,7 +40,7 @@ export class ProductService {
   }
   getCategories(): Observable<Category[]> {
     return this.http.get<Category[]>(`${environment.apiUrl}/Category`).pipe(
-      tap(data  => console.log('קטגוריות:', data)),
+      tap(data => console.log('קטגוריות:', data)),
       catchError(error => {
         console.error('שגיאה בשליפת קטגוריות:', error);
         return throwError(() => error);
@@ -55,5 +55,13 @@ export class ProductService {
   getWinner(giftId: number): Observable<User> {
     return this.http.get<User>(`${this.apiUrl}/winner/${giftId}`);
   }
-
+  getProductsByCategory(categoryId: number): Observable<Product[]> {
+    return this.http.get<Product[]>(`${environment.apiUrl}/Gifts/category/${categoryId}`).pipe(
+      tap(data => console.log('מוצרים לפי קטגוריה:', data)),
+      catchError(error => {
+        console.error('שגיאה בשליפת מוצרים לפי קטגוריה:', error);
+        return throwError(() => error);
+      })
+    );
+  }
 }

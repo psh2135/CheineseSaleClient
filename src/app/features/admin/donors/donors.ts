@@ -231,6 +231,7 @@ import { TooltipModule } from 'primeng/tooltip';
 
 import { AdminService } from '../../../core/services/admin';
 import { User } from '../../../core/models/user.model';
+import { ConfirmationService, MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-admin-donors',
@@ -250,7 +251,8 @@ import { User } from '../../../core/models/user.model';
     ToastModule,
     ConfirmDialogModule,
     TooltipModule
-  ]
+  ],
+  providers: [MessageService, ConfirmationService]
 })
 export class AdminDonorsComponent implements OnInit {
 
